@@ -23,6 +23,7 @@ async function run() {
         await client.connect()
         const partsCollection = client.db("cavalryparts").collection("parts");
         const userCollection = client.db("cavalryparts").collection("user");
+        const orderCollection = client.db("cavalryparts").collection("order");
 
         //get all parts
         app.get('/parts', async(req, res)=>{
@@ -54,6 +55,13 @@ async function run() {
         );
         res.send(result);
       });
+
+      // create order
+      app.post('/order', async(req, res)=>{
+        const order = req.body;
+        const result = await orderCollection.insertOne(order);
+        res.send(result)
+      })
   
 
     }finally{
