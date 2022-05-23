@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -22,12 +22,39 @@ async function run() {
     try{
         await client.connect()
         const partsCollection = client.db("cavalryparts").collection("parts");
+        const userCollection = client.db("cavalryparts").collection("user");
 
         //get all parts
         app.get('/parts', async(req, res)=>{
             const parts = await partsCollection.find({}).toArray();
             res.send(parts)
         })
+
+        //get single parts
+        app.get('/parts/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)}
+            const result = await partsCollection.findOne(query);
+            res.send(result)
+        })
+
+          // get users by email
+    app.put("/user/:email", async (req, res) => {
+        const user = req.body;
+        const email = req.params.email;
+        const filter = { email: email };
+        const option = { upsert: true };
+        const updatedDoc = {
+          $set: user,
+        };
+        const result = await userCollection.updateOne(
+          filter,
+          updatedDoc,
+          option
+        );
+        res.send(result);
+      });
+  
 
     }finally{
 
