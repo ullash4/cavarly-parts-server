@@ -121,6 +121,14 @@ async function run() {
         
       })
 
+      // delete order
+      app.delete('/order/:id', verifyJWT, async(req, res)=>{
+        const id = req.params.id;
+        const query = {_id: ObjectId(id)};
+        const result = await orderCollection.deleteOne(query)
+        res.send(result)
+      })
+
       // add product
       app.post('/parts', async(req, res)=>{
         const product = req.body;
