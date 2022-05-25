@@ -183,7 +183,10 @@ async function run() {
       res.send({admin: isAdmin})
     })
 
-    app.post('/create-payment-intent', verifyJWT, async(req, res) =>{
+    app.post('/create-payment-intent', async(req, res) =>{
+      const order = req.body;
+      const price = order?.productPrice;
+      const amount = price*100;
       const paymentIntent = await stripe.paymentIntents.create({
         amount : amount,
         currency: 'usd',
